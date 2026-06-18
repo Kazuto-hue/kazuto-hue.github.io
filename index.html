@@ -400,7 +400,11 @@
       <!-- Contact Form -->
       <div class="contact-form animate-on-scroll animate-delay-1">
         <h3 class="form-title">// Send Message</h3>
-        <form id="contactForm">
+        <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="671d3232-1830-4bf1-85b8-b1ede32f6cfe">
+          <input type="hidden" name="from_name" value="Portfolio Contact Form">
+          <input type="hidden" name="subject" value="New Message from Portfolio Website">
+          <input type="checkbox" name="botcheck" class="hidden" style="display: none;">
           <div class="form-group">
             <label for="contactName">Name</label>
             <input type="text" id="contactName" name="name" placeholder="Enter your name" required>

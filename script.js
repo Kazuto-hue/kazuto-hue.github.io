@@ -141,26 +141,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* --------------------------------------------------------
    * 7.  CONTACT FORM HANDLING
-   *     Prevents default, flashes confirmation, resets form
+   *     Sends form data via AJAX to Web3Forms and displays success/error states
    * ------------------------------------------------------ */
   if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const submitBtn       = contactForm.querySelector('button[type="submit"], input[type="submit"]');
-      const originalText    = submitBtn ? submitBtn.textContent : '';
+      const submitBtn    = contactForm.querySelector('button[type="submit"], input[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : 'Send Message →';
 
       if (submitBtn) {
-        submitBtn.textContent = '✓ Message sent!';
+        submitBtn.textContent = 'Sending...';
         submitBtn.disabled    = true;
-
-        setTimeout(() => {
-          submitBtn.textContent = originalText;
-          submitBtn.disabled    = false;
-        }, 2500);
       }
 
-      contactForm.reset();
+      const formData = new FormData(contactForm);
+      const object   = Object.fromEntries(formData);
+      const json     = JSON.stringify(object);
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json
+      })
+      .then(async (response) => {
+        const res = await response.json();
+        if (response.status === 200) {
+          if (submitBtn) {
+            submitBtn.textContent = '✓ Message sent!';
+            submitBtn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)'; // Success green
+          }
+          contactForm.reset();
+        } else {
+          console.error(res);
+          if (submitBtn) {
+            submitBtn.textContent = '✗ Failed to send';
+            submitBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)'; // Error red
+          }
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        if (submitBtn) {
+          submitBtn.textContent = '✗ Error occurred';
+          submitBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)'; // Error red
+        }
+      })
+      .finally(() => {
+        setTimeout(() => {
+          if (submitBtn) {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled    = false;
+            submitBtn.style.background = ''; // reset to CSS default
+          }
+        }, 3000);
+      });
     });
   }
 
