@@ -1,0 +1,13 @@
+# OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# Node (in case you add build tools later)
+node_modules/
